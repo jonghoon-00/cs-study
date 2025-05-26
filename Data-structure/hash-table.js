@@ -4,7 +4,7 @@
 // Map 메서드가 내부적으로 해시 기반 구조 사용함
 
 // 구현 목표 - 해시테이블 형태의 전화번호부 만들기.
-// (체이닝 방식을 적용한 간단한 해시테이블블)
+// (체이닝 방식을 적용한 간단한 해시테이블)
 
 // 1. key-value 구조의 데이터 저장소 생성
 // 2. 문자열 key를 기반으로 데이터를 저장하고 검색할 수 있다.
@@ -53,7 +53,7 @@ class HashTable {
         if (k === key) return v;
       }
     }
-    return undefined;
+    return console.log("get 에러, 버킷이 존재하지 않는 것 같습니다.");
   }
 
   display() {
@@ -63,14 +63,38 @@ class HashTable {
       }
     });
   }
+
+  delete(key) {
+    //체이닝 방식 구현이라, for문 순회로 구현
+    const index = this._hash(key);
+    const bucket = this.table[index];
+
+    if (bucket) {
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i][0] === key) {
+          bucket.splice(i, 1);
+
+          if (bucket.length === 0) {
+            this.table[index] = null; // 비어있으면 초기화
+          }
+          return console.log("삭제 완료");
+        }
+      }
+      return console.log("delete 에러, 해당 key를 찾을 수 없음");
+    }
+  }
 }
 
 const hashTable = new HashTable();
 hashTable.set("홍길동", "010-1234-5678");
 hashTable.set("마석대", "010-0000-0000");
+hashTable.set("곽두팔", "010-1111-1111");
 
 hashTable.display();
-//1 [ [ '마석대', '010-0000-0000' ] ]
+//1 [ [ '마석대', '010-0000-0000' ], [ '곽두팔', '010-1111-1111' ] ]
 //2 [ [ '홍길동', '010-1234-5678' ] ]
 
 console.log(hashTable.get("홍길동")); //010-1234-5678
+
+hashTable.delete("홍길동"); // 삭제 완료
+hashTable.get("홍길동"); // get 에러, 버킷이 존재하지 않는 것 같습니다.
